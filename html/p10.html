@@ -145,13 +145,6 @@
                         </div>
 
                     </form>
-
-                    <div>
-                        <input name="submit"
-                            class="btn btn-secondary btn-warning btn-lg btn-block rounded-0 border-0 p-1 font-weight-bold btn-submit submit"
-                            type="submit" value="Revisa tus respuestas">
-                    </div>
-
                 </div>
             </div>
         </div>
@@ -209,55 +202,59 @@
     <script src='https://code.jquery.com/jquery-2.2.4.min.js'></script>
 
     <script>
-        var $exerciseDropdown = $(".exercise-dropdown");
-        var $submitBtn = $exerciseDropdown.find(".btn-submit");
-        var $allSelectTag = $exerciseDropdown.find("select");
-
-        var answersCorrectArray = ["suelo", "químico", "seres vivos", "crecimiento", "recursos naturales", "cambio climático", "metano", "efecto invernadero", "sequias", "capacidad productiva", "biodiversidad", "ecológicos", "servicios ambientales", "extinción", "sexta extinción"];
-        var classSelectors = "correct, incorrect";
-
-        $submitBtn.hide();
-
-        //Submit Button event handler - Checks if answer is correct or incorrect
-        $submitBtn.on("click", function () {
-            $allSelectTag.find("option:selected").each(function (index, item) {
-                var isSelectedCorrect =
-                    answersCorrectArray[index].toUpperCase() ===
-                    $(this)
-                        .text()
-                        .toUpperCase();
-
-                $(item)
-                    .parent()
-                    .removeClass(classSelectors)
-                    .addClass(isSelectedCorrect ? "correct" : "incorrect")
-                    .css({
-                        cursor: "auto"
-                    });
-            });
-        });
-
-        function isChecked(element, index, array) {
-            return element === false;
-        }
-
-        //Select dropdown Button event handler - Checks when to fadeIn submit button
-        $allSelectTag.on("click", function () {
-            var selectArray = [];
-
-            //Only perform code is submit button is not visible
-            if (!$submitBtn.is(":visible")) {
-                $allSelectTag.find("option:selected").each(function (index, item) {
-                    selectArray[index] = $(item).is(":disabled");
-                });
-
-                if (selectArray.every(isChecked)) {
-                    console.log("all clicked - Show submit button");
-                    //All dropdowns have been answered so show submit button
-                    $submitBtn.fadeIn();
+        document.addEventListener("DOMContentLoaded", function () {
+            var options = {
+                correctAnswers: {
+                    "1-select": "suelo",
+                    "2-select": "químico",
+                    "3-select": "seres vivos",
+                    "4-select": "crecimiento",
+                    "5-select": "recursos naturales",
+                    "6-select": "cambio climático",
+                    "7-select": "metano",
+                    "8-select": "efecto invernadero",
+                    "9-select": "sequias",
+                    "10-select": "capacidad productiva",
+                    "11-select": "biodiversidad",
+                    "12-select": "ecológicos",
+                    "13-select": "servicios ambientales",
+                    "14-select": "extinción",
+                    "15-select": "sexta extinción",
                 }
-            }
+            };
+            exerciseDropdown(options);
         });
+    </script>
+
+    <script>
+        (function () {
+            function exerciseDropdown(options) {
+                var defaultSettings = {
+                    correctAnswers: {},
+                    classSelectors: "correct,incorrect",
+                    correctColor: "green",
+                    incorrectColor: "red",
+                    correctTextColor: "white",
+                    incorrectTextColor: "white"
+                };
+                var settings = Object.assign({}, defaultSettings, options);
+                var exerciseDropdown = document.querySelector(".exercise-dropdown");
+                var allSelectTag = exerciseDropdown.querySelectorAll("select");
+
+                allSelectTag.forEach(function (select) {
+                    select.addEventListener("change", function () {
+                        var selectedOption = select.options[select.selectedIndex];
+                        var selectedValue = selectedOption.value;
+                        var questionId = select.id;
+                        var isSelectedCorrect = settings.correctAnswers[questionId].trim().toLowerCase() === selectedValue.trim().toLowerCase();
+                        select.classList.remove(...settings.classSelectors.split(','));
+                        select.classList.add(isSelectedCorrect ? "correct" : "incorrect");
+                        select.setAttribute("style", `background-color: ${isSelectedCorrect ? settings.correctColor : settings.incorrectColor}; color: ${isSelectedCorrect ? settings.correctTextColor : settings.incorrectTextColor};`);
+                    });
+                });
+            }
+            window.exerciseDropdown = exerciseDropdown;
+        })();
     </script>
 
     <style type="text/css">
@@ -277,46 +274,6 @@
         .exercise-dropdown p {
             line-height: 2.4;
         }
-
-        .correct {
-            color: white;
-            background: #28B353;
-        }
-
-        .incorrect {
-            color: white;
-            background: #D64141;
-        }
-
-        .table td,
-        .table th {
-            vertical-align: middle;
-            border-top: 2px solid #dee2e6;
-        }
-
-
-        /* .svg-checkbox li,
-        .svg-radio li {
-          display: inline-block !important;
-        } */
-
-        .svg-checkbox label,
-        .svg-radio label {
-            padding: 0 15px 0 50px !important;
-        }
-
-        @media screen and (max-width: 768px) {
-
-            .svg-checkbox,
-            .svg-radio {
-                padding: 0 !important;
-            }
-        }
-
-        .retro {
-            display: none
-        }
-
         /* EJERCICIO DROP */
     </style>
 
